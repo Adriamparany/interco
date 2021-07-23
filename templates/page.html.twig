@@ -49,9 +49,10 @@
             codique = codique;
         }                          
         var urltxt = '/res/'+fonctionuser+'/'+codique+'/'+username
+        urltxt = urltxt.replace(/\s/g, '');//remove space
         //alert(urltxt);
-        console.log(username)
-        console.log(accesuser)
+        //console.log(urltxt)
+        //console.log(accesuser)
         $.ajax({
             async: true,
             url: urltxt,

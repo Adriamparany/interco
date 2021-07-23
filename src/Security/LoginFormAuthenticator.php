@@ -81,7 +81,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         /**
          * @see UserPasswordEncoder.php, ftr has  modified some lignes 
          */
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);//@see /Users/cos/symfony_src/interco/vendor/symfony/security-core/Encoder/UserPasswordEncoderInterface.php
     }
 
     /**
