@@ -18,7 +18,12 @@ class SecurityController extends AbstractController
         // if ($this->getUser()) {
         //     return $this->redirectToRoute('app_login');
         // }
-        
+        /* on symfony/security-core/Encoder/UserPasswordEncoder.php
+        $encoder = $this->encoderFactory->getEncoder($user);
+        $encoded =  $encoder->encodePassword($user->getPassword(), $user->getSalt());
+        //return $encoder->isPasswordValid($user->getPassword(), $raw, $user->getSalt());
+        return $encoder->isPasswordValid($encoded, $raw, $user->getSalt());
+        */
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
