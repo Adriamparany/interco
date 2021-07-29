@@ -12,6 +12,7 @@
       */
       public function homepage(){
          //dump($this);
+         //phpinfo();
          return $this->render('home.html.twig', [
             'page' => 'HOME', 
             'navigation'=>['href'=>'#', 'caption'=>"BIENVENU"]

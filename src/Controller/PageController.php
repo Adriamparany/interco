@@ -23,8 +23,9 @@ class PageController extends AbstractController{
       */
       //, methods="POST"
       public function showTblValidation(TblvalidationRepository $tblvalidationrepository, $dir='', $cod='',$usr=''){
-         if ($usr == 'superadmin') {
+         if ($usr == 'superadmin') {           
             $tblvalidation = $tblvalidationrepository->findAllLastValidationForAdmin();
+            //$tblvalidation = $tblvalidationrepository->findAllValidationInnerJoin();
          }else{
             if ($dir == 'superadmin') {
                $tblvalidation = $tblvalidationrepository->findAllLastValidationForEachCodique();
