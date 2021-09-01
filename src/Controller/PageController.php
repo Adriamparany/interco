@@ -19,17 +19,22 @@ class PageController extends AbstractController{
       }
 
       /**
-       * @Route("/res/{dir}/{cod}/{usr}", name="showvalidation", methods="POST")
+       * @Route("/res/{usrfct}/{cod}/{usr}", name="showvalidation", methods="POST")
       */
       //, methods="POST"
-      public function showTblValidation(TblvalidationRepository $tblvalidationrepository, $dir='', $cod='',$usr=''){
+      public function showTblValidation(TblvalidationRepository $tblvalidationrepository, $usrfct='', $cod='',$usr=''){
          if ($usr == 'superadmin') {           
             $tblvalidation = $tblvalidationrepository->findAllLastValidationForAdmin();
             //$tblvalidation = $tblvalidationrepository->findAllValidationInnerJoin();
          }else{
-            if ($dir == 'superadmin') {
+            if ($usrfct == 'superadmin') {
                $tblvalidation = $tblvalidationrepository->findAllLastValidationForEachCodique();
-            }elseif ($dir != '' ) {
+            }elseif($usrfct == 'chefdecentre'){
+               $tblvalidation = $tblvalidationrepository->findAllLastValidationForOneCodique($cod);
+               return $this->render('detailsvalidation.html.twig',
+                  [ 'controller_name' => 'PageController', 'results' => $tblvalidation, 'route_name'=>'showvalidation'
+               ]);
+            }elseif ($usrfct != '' ) {
                if ($cod != '') {
                   //dd(substr($cod,0,1));
                   $dirpm = array('1'=>'Antananarivo','2'=>'Antsiranana','3'=>'Fianarantsoa','4'=>'Mahajanga','5'=>'Toamasina','6'=>'Toliara','7'=>'CPVakmen','8'=>'CPSofia','9'=>'CPIhorombe','A'=>'CPAnosyAndroy');

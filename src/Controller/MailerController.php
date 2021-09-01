@@ -27,11 +27,11 @@ class MailerController extends AbstractController
      */
     public function sendEmail(MailerInterface $mailer): Response
     {
-        dd();
+        //dd();
         $email = (new Email())
             //->from('ddpwebetmultimedia@gmail.com')
             ->from('interco@paositramalagasy.mg')
-            ->to('interco@paositramalagasy.mg')
+            ->to('ddpwebetmultimedia@gmail.com')
             ->cc('rasolonjatovofetra@gmail.com')
             ->cc('masakymakaveli@gmail.com')
             //->bcc('bcc@example.com')
@@ -39,11 +39,12 @@ class MailerController extends AbstractController
             ->priority(Email::PRIORITY_HIGH)
             ->subject('Interco!')
             ->text('Sending emails is fun again!')
-            ->html('<p>Miarahaba tompoko</p>');
+            ->html('<p>Miarahaba tompoko; Sending emails is fun again</p>');
 
-        $sender = '';
-        $receiver = '';
-        $userSentConfirmationMessage = [];
+            $sender = '';
+            $receiver = '';
+            $copies = '';
+            $userSentConfirmationMessage = [];
         try {
             $mailer->send($email);
             //dd($email->getHeaders()->get('to')->getBodyAsString());
@@ -54,7 +55,7 @@ class MailerController extends AbstractController
             $receiver = $email->getHeaders()->get('to')->getBodyAsString();
         } catch (TransportExceptionInterface $e) {
             // some error prevented the email sending; display an
-            // error message or try to resend the message      
+            // error message or try to resend the message
         }
 
         // the template path is the relative file path from `templates/`
@@ -65,6 +66,7 @@ class MailerController extends AbstractController
             'sender' => $sender,
             'userSentConfirmationMessage' => $userSentConfirmationMessage,
             'receiver'=> $receiver,
+            'copy'=> $copies,
         ]);
     }
     /**
@@ -88,7 +90,7 @@ class MailerController extends AbstractController
 
         $form->handleRequest($request);
 
-        
+
         if($form->isSubmitted() && $form->isValid()) {
 
             $contactFormData = $form->getData();
@@ -100,13 +102,13 @@ class MailerController extends AbstractController
             $receiver = '';
             $copies = '';
             $userSentConfirmationMessage = [];
-           
+
             //dd($contactFormData);
             $email = (new Email())
                 ->from($contactFormData['from'])
                 ->subject($contactFormData['subject'])
                 ->text($contactFormData['content']);
-            
+
             if (str_contains($contactFormData['to'], ',')) {
                 $to_array = explode(",",$contactFormData['to']);
                 foreach($to_array as $value){
@@ -143,11 +145,11 @@ class MailerController extends AbstractController
                 $this->addFlash('success', 'Your message has been sent');
             } catch (TransportExceptionInterface $e) {
                 // some error prevented the email sending; display an
-                // error message or try to resend the message  
-                //dd('Une erreur est survenue');  
-                print($e);          
+                // error message or try to resend the message
+                //dd('Une erreur est survenue');
+                print($e);
             }
-            
+
             //return $this->redirectToRoute('emailform');
             // the template path is the relative file path from `templates/`
             return $this->render('email/notifications.html.twig', [
@@ -160,9 +162,109 @@ class MailerController extends AbstractController
                 'copy'=> $copies,
             ]);
         }
-        
+
         return $this->render('email/contact.html.twig', [
             'our_form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/emailme", name="emailme")
+     * 
+     * @param Request $request
+     * @return array|JsonResponse|null|object
+     */
+    public function sendEmailMe(MailerInterface $mailer, Request $request)
+    {
+        //dump(array(1=>'fetra')) ;
+        $content = $request->getContent(false);
+       //dump($content);
+        $content_arr = explode('&',$content);
+        $data_array=array();
+        foreach ($content_arr as $key => $value) {
+            $x = explode('=',urldecode($value));
+            $a=$x[0]; 
+            $b=$x[1];
+            $data_array += [$a=>$b];
+            //dump($data_array);
+        }
+        //$pattern = "/\s/";//Match any whitespace characteres
+        //$pattern = "/[^\S ]+/"; //Regex that Matches all whitespace characteres except spaces
+        $pattern = "/\n/";
+        $replacement = "<br>";
+        //$text = "Earth revolves around\nthe\tSun";
+        // Replace spaces, newlines and tabs
+        $text = $data_array['message'];
+        //dump(preg_replace($pattern, $replacement, $text));
+
+        $email = (new Email())
+            //->from('interco@paositramalagasy.mg')
+            ->from($data_array['sender'])
+            //->to('rasolonjatovofetra@gmail.com')
+            //->to($data_array['recipient'])
+            //->cc('masaky@gmail.com')
+            //->cc($data_array['cc'])
+            //->bcc('bcc@example.com')
+            //->replyTo('fabien@example.com')
+            ->priority(Email::PRIORITY_HIGH)
+            //->subject('Interco!')
+            ->subject($data_array['subject'])
+            //->text('it works!')
+            ->text($data_array['message'])
+            //->html("<p>Miarahaba tompoko mandeha tsara</p>");
+           ->html(preg_replace($pattern, $replacement, $text));
+
+        if (str_contains($data_array['recipient'], ',')) {
+            $to_array = explode(",",$data_array['recipient']);
+            foreach($to_array as $value){
+                $email->addTo($value);
+            }
+        }else{
+            $email->to($data_array['recipient']);
+            //$email->to('rasolonjatovofetra@gmail.com');
+        }
+
+        if ($data_array['cc'] != null && $data_array['cc'] != "") {
+            if (str_contains($data_array['cc'], ',')) {
+                $cc_array = explode(",",$data_array['cc']);
+                foreach($cc_array as $value){
+                    $email->addCc($value);
+                }
+            }else{
+                $email->cc($data_array['cc']);
+            }
+        }
+
+        //dump($data_array);
+        
+        $sender = '';
+        $receiver = '';
+        $copies = '';
+        $userSentConfirmationMessage = [];
+        try {
+            $mailer->send($email);
+            //dd($email->getHeaders()->get('to')->getBodyAsString());
+            //dd($email->getHeaders()->get('to'));
+            //$sender = $email->text;
+            $userSentConfirmationMessage = ['notif'];
+            $sender = $email->getHeaders()->get('from')->getBodyAsString();
+            $receiver = $email->getHeaders()->get('to')->getBodyAsString();
+            if ($email->getHeaders()->get('cc') != null) {
+                $copies = $email->getHeaders()->get('cc')->getBodyAsString();
+            }
+
+            $this->addFlash('success', 'Your message has been sent');
+        } catch (TransportExceptionInterface $e) {
+            // some error prevented the email sending; display an
+            // error message or try to resend the message
+            print($e);
+        }
+
+        // the template path is the relative file path from `templates/`
+        return $this->json(['sender' => $sender,
+            'userSentConfirmationMessage' => $userSentConfirmationMessage,
+            'receiver'=> $receiver,
+            'copy'=> $copies,
         ]);
     }
 

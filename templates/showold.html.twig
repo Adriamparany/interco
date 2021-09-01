@@ -25,7 +25,7 @@
 
                     <!--Table body-->
                     <tbody id="myTable">
-
+                        
                         {% for indice,arrayRes in results %}
                             <tr>
                                 <th scope="row"> {{ indice + 1 }}</th>
@@ -33,14 +33,14 @@
                                 {% for key,value in arrayRes %}
                                     {% if key == 'dateval' %}
                                         {% set startDate = value|format_date() %}
-                                        <td>{{ value|format_datetime('short', 'none', locale='fr') }}</td>
+                                        <td>{{ value|format_datetime('short', 'none', locale='fr') }}</td> 
                                     {% else %}
                                         {% if key == 'codique' %}
-                                            <td><a data-bs-toggle="tooltip" title="Voir les dix derniers validations." href="/page/{{ value }}">{{ value }}</a></td>
+                                            <td><a href="/page/{{ value }}">{{ value }}</a></td>
                                         {% else %}
                                             <td>{{ value }}</td>
                                         {% endif %}
-                                    {% endif %}
+                                    {% endif %} 
                                 {% endfor %}
 
                                 {% set difference = date( "now" | date() ).diff(date(startDate)) %}
@@ -49,7 +49,7 @@
                                 {% set leftMonths = difference.m %}
                                 {% set leftYears = difference.y %}
 
-                                {% set bgcolor = 'none' %}
+                                {% set bgcolor = 'none' %}    
                                 {% if leftYears > 0 %}
                                     {% set bgcolor = '#F73107' %}
                                     {% set countYMD = countYMD|merge({'years': (countYMD.years + 1)}) %}
@@ -66,12 +66,12 @@
                                     {% set bgcolor = 'none' %}
                                     {% set countYMD = countYMD|merge({'days': (countYMD.days + 1)}) %}
                                 {% endif %}
-
-                                <td style="background: {{ bgcolor }} ; color: 'white' ">
-
-                                {{ leftYears }} années.
+                                
+                                <td style="background: {{ bgcolor }} ; color: 'white' "> 
+                                
+                                {{ leftYears }} années. 
                                 {{ leftMonths }} mois.
-                                {{ leftDays }} jours
+                                {{ leftDays }} jours 
                                 </td>
 
                                 {# Let add email-data on email sending #}
@@ -85,26 +85,26 @@
                                         {% set nombureau = value %}
                                     {% elseif key == 'dirpm' %}
                                         {% set dirpm = value %}
-                                    {% endif %}
+                                    {% endif %} 
                                 {% endfor %}
                                 {# end email-data #}
 
                                 {#<td><a href="/emailform"><i class="fa fa-paper-plane" aria-hidden="true"></i></a></td>#}
-                                {# <td><button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" data-sender="[email]@paositramalagasy.mg" data-recipient="ddpwebetmultimedia@gmail.com" data-subject="Interco: Situation au " data-msgcontent="Bureau: {{ nombureau }}, Rattachement: {{ dirpm }} &#13;Comptabilité à valider: &#13; {{ leftYears }} années {{ leftMonths }} mois {{ leftDays }} jours"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button></td> #}
-                                <td><button type="button" class="btn btn-light" data-bs-toggle="tooltip" title="Notifier par email" data-toggle="modal" data-target="#exampleModal" data-sender="interco@paositramalagasy.mg" data-recipient="ddpwebetmultimedia@gmail.com" data-subject="Interco: Situation au " data-msgcontent="Bureau: {{ nombureau }}, Rattachement: {{ dirpm }} &#13; La derniére fois que vous avez soumis votre Comptabilité remonte à &#13; {{ leftYears }} années {{ leftMonths }} mois {{ leftDays }} jours"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button></td>
+                                {# <td><button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" data-sender="[email]@paositramalagasy.mg" data-recipient="@" data-subject="Interco: Situation au " data-msgcontent="Bureau: {{ nombureau }}, Rattachement: {{ dirpm }} &#13;Comptabilité à valider: &#13; {{ leftYears }} années {{ leftMonths }} mois {{ leftDays }} jours"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button></td> #}
+                                <td><button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" data-sender="[email]@paositramalagasy.mg" data-recipient="@" data-subject="Interco: Situation au " data-msgcontent="Bureau: {{ nombureau }}, Rattachement: {{ dirpm }} &#13;Comptabilité à valider: &#13; {{ leftYears }} années {{ leftMonths }} mois {{ leftDays }} jours"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button></td> 
                             </tr>
                         {% endfor %}
-
+                        
                     </tbody>
                     <!--Table body-->
                 </table>
                 <!--Table-->
             </div>
-
-        {% endif %}
+            
+        {% endif %} 
         <div id="legende2"><span class="bg-danger year">Rouge:</span> ({{ countYMD.years }}) Retard de plus d'un an , <span class="bg-primary month">Bleue:</span> ({{ countYMD.months }}) Retard de plus d'un mois, <span class="bg-warning week">Jaune:</span> ({{ countYMD.weeks }}) Retard de plus d'une semaine, <span class="bg-success day">Verte:</span> ({{ countYMD.lessOneWeek }}) Moin d'une semaine, <span class="border border-info noday">Aucune:</span> ({{ countYMD.days }}) A jour</div>
         </br>
-
+        
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-recipient="@mdo">Open modal</button>
 
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -117,7 +117,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="mailing_form" method="POST" action="emailme">
+                    <form id="mailing_form" method="POST" action="/emailme">
                         <div class="form-group">
                             <label for="sender-name" class="col-form-label">Sender:</label>
                             <input type="email" class="form-control" id="sender-name" name="sender">
@@ -148,18 +148,18 @@
             </div>
         </div>
     <div>
-    <script>//cannot be inserted outside the block if not countYMD's values would be zero
+    <script>//cannot be inserted outside the block if not countYMD's values would be zero 
         window.onload = function() {
             $('#legende').append($('#legende2').html())
             $('#legende2').remove()
             /*
             $('#legende span.year').after('<b> '+ {{ countYMD.years }} + '</b>')
-            $('#legende span.month').after('<b> '+ {{ countYMD.months }} + '</b>')
-            $('#legende span.week').after('<b> '+ {{ countYMD.weeks }} + '</b>')
-            $('#legende span.day').after('<b> '+ {{ countYMD.lessOneWeek }} + '</b>')
-            $('#legende span.noday').after('<b> '+ {{ countYMD.days }} + '</b>')
-            */
-        }
+            $('#legende span.month').after('<b> '+ {{ countYMD.months }} + '</b>')  
+            $('#legende span.week').after('<b> '+ {{ countYMD.weeks }} + '</b>') 
+            $('#legende span.day').after('<b> '+ {{ countYMD.lessOneWeek }} + '</b>') 
+            $('#legende span.noday').after('<b> '+ {{ countYMD.days }} + '</b>')  
+            */ 
+        } 
 
         $(document).ready(function(e){
             console.log('document ready on show.html.twig')
@@ -168,7 +168,7 @@
             var recipient = button.data('recipient') // Extract info from data-* attributes
             var sender = button.data('sender')
 
-            var subject = button.data('subject')
+            var subject = button.data('subject') 
             var today = new Date()
             var dd = String(today.getDate()).padStart(2, '0')
             var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -196,28 +196,23 @@
 
             //submit
             $("#mailing_form").on("submit", function(e) {
-                var postData = $(this).serialize();
-                var formURL = $(this).attr("action");
+                var postData = $(this).serialize();//only if using post to another page
+                var formURL = $(this).attr("action");//url of the post
                 var formData = getFormData($(this))
                 console.log(formData);
-                //postData = encodeURI(postData)
                 //postData = postData.replace('/','-')
                 //console.log(postData)
-                //console.log(formURL)
+                console.log(formURL)
                 $.ajax({
                     //url: formURL+'/'+postData,
-                    url: "{{ path('emailme') }}",
-                    //url: formURL,
+                    url: formURL
                     type: "POST",
-                    //data: formData,
-                    data: formData,
                     contentType: "application/json; charset=utf-8",
+                    dataType : 'json',
+                    data: formData,
                     success: function(response) {
                         console.log(response)
-                        $('#exampleModal').modal('toggle');
-                        alert('Email envoyé!');
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
+                        //$('#exampleModal').modal('toggle');
                     },
                     error: function(jqXHR, status, error) {
                         console.log(status + ": " + error);
@@ -226,10 +221,11 @@
                 e.preventDefault();
             });
             $("#submitForm").on('click', function() {
+                //alert('gsdjfgs')
                 $("#mailing_form").submit();
             });
         })
-
+        
         //get all data from form, returns json object
         function getFormData($form){
             var unindexed_array = $form.serializeArray();
