@@ -15,7 +15,26 @@
                     <tr>
                         <th>#</th>
                         {% for resultkey,value in results[0] %}
-                            <th class="th-lg"> {{ resultkey }} </th>
+                            {% if resultkey == 'dirpm' %}
+                                <th class="th-lg">
+                                    <div id="dirpm" class="dropdown">  {{ resultkey }} </div>
+                                    <select id="myDropdown" class="dropdown-content">
+                                    <option value="">Tous</option>
+                                        <option value="Antananarivo">Antananarivo</option>
+                                        <option value="Antsiranana">Antsiranana</option>
+                                        <option value="Mahajanga">Mahajanga</option>
+                                        <option value="Toamasina">Toamasina</option>
+                                        <option value="Fianarantsoa">Fianarantsoa</option>
+                                        <option value="Toliara">Toliara</option>
+                                        <option value="CPVakmen">CPVakmen</option>
+                                        <option value="CPSofia">CPSofia</option>
+                                        <option value="CPAnosyAndroy">CPAnosyAndroy</option>
+                                        <option value="CPIhorombe">CPIhorombe</option>
+                                    </select>
+                                </th>
+                            {% else %}  
+                                <th class="th-lg"> {{ resultkey }} </th> 
+                            {% endif %}                           
                         {% endfor %}
                         <th>Observations</th>
                         <th>Notifier</th>
@@ -36,7 +55,7 @@
                                         <td>{{ value|format_datetime('short', 'none', locale='fr') }}</td>
                                     {% else %}
                                         {% if key == 'codique' %}
-                                            <td><a data-bs-toggle="tooltip" title="Voir les dix derniers validations." href="/page/{{ value }}">{{ value }}</a></td>
+                                            <td><a data-bs-toggle="tooltip" title="Voir les dix derniers validations" href="/page/{{ value }}">{{ value }}</a></td>
                                         {% else %}
                                             <td>{{ value }}</td>
                                         {% endif %}
@@ -241,6 +260,21 @@
             return indexed_array;
         }
 
+        function filterFunction() {
+            var input, filter, ul, li, a, i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            div = document.getElementById("myDropdown");
+            a = div.getElementsByTagName("a");
+            for (i = 0; i < a.length; i++) {
+                txtValue = a[i].textContent || a[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+                } else {
+                a[i].style.display = "none";
+                }
+            }
+        }
     </script>
     {#
     <pre>

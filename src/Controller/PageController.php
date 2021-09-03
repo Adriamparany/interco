@@ -12,7 +12,7 @@ class PageController extends AbstractController{
       /**
        * @Route("/page", name="page")
       */
-      public function suivre(){
+      public function suivre(){//and the template use ajax to call showvalidation or showdetailsvalidation
          return $this->render('page.html.twig', [
             'page' => 'Suivi'
          ]);

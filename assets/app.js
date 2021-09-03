@@ -38,15 +38,34 @@ $container.find('.navbar-toggler').on('click', function(e){
     e.preventDefault();
     //alert("hey")
 })
-console.log("hello");
+//console.log("hello");
 
 /************* search in show.html.twig **************/
     $('#content').find("input[name='search']").on('keyup', function(e){
         e.preventDefault();
-        //alert('search')
+        console.log('searching')
         var value = $(this).val().toLowerCase();
         $("#myTable tr").filter(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     })
+
+    $('#content').find(".dropbtn").on('click', function(e){
+      e.preventDefault();
+      console.log('hovering...')
+      document.getElementById("myDropdown").classList.toggle("show");
+    })
+
+    $('#dirpm').on('click', function(e){
+      console.log('click...')
+      document.getElementById("myDropdown").classList.toggle("show");
+    });
+
+    $("select#myDropdown").on('change',function(){
+        var selectedVal = $(this).children("option:selected").val();
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
 /************* end search in show.html.twig **************/
