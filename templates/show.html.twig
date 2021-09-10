@@ -37,6 +37,7 @@
                             {% endif %}                           
                         {% endfor %}
                         <th>Observations</th>
+                        <th></th>
                         <th>Notifier</th>
                     </tr>
                     </thead>
@@ -44,7 +45,6 @@
 
                     <!--Table body-->
                     <tbody id="myTable">
-
                         {% for indice,arrayRes in results %}
                             <tr>
                                 <th scope="row"> {{ indice + 1 }}</th>
@@ -62,9 +62,10 @@
                                     {% endif %}
                                 {% endfor %}
 
-                                {% set difference = date( "now" | date() ).diff(date(startDate)) %}
-                                {% set leftDays = difference.days %}
+                                {% set difference = date( "now"|date() ).diff(date(startDate)) %}
+                                {% set totalDays = difference.days %}
                                 {% set leftHours = difference.h %}
+                                {% set leftDays = difference.d %}
                                 {% set leftMonths = difference.m %}
                                 {% set leftYears = difference.y %}
 
@@ -87,15 +88,19 @@
                                 {% endif %}
 
                                 <td style="background: {{ bgcolor }} ; color: 'white' ">
-
-                                {{ leftYears }} années.
-                                {{ leftMonths }} mois.
+                                {{ leftYears }} années
+                                {{ leftMonths }} mois
                                 {{ leftDays }} jours
+                                , soit {{ totalDays }} jours
+                                <br>
+                                Date de la dernière saisie: {{ startDate|format_datetime('short', 'none', locale='fr') }}
                                 </td>
 
                                 {# Let add email-data on email sending #}
                                 {% set nombureau = '' %}
                                 {% set dirpm = '' %}
+                                {% set codique = '' %}
+                                {% set lastValidation  = "now"|date("dd/mm/Y") %}
                                 {% for key,value in arrayRes %}
                                     {% if key == 'dateval' %}
                                         {% set startDate = value|format_date() %}
@@ -104,10 +109,13 @@
                                         {% set nombureau = value %}
                                     {% elseif key == 'dirpm' %}
                                         {% set dirpm = value %}
+                                    {% elseif key == 'codique' %}
+                                        {% set codique = value %}
                                     {% endif %}
                                 {% endfor %}
                                 {# end email-data #}
 
+                                <td><a href="/accounting/{{ codique }}-{{ nombureau }}-{{ dirpm }}/{{ lastValidation|replace({'/':'-'}) }}">Situation comptable</a></td>
                                 {#<td><a href="/emailform"><i class="fa fa-paper-plane" aria-hidden="true"></i></a></td>#}
                                 {# <td><button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" data-sender="[email]@paositramalagasy.mg" data-recipient="ddpwebetmultimedia@gmail.com" data-subject="Interco: Situation au " data-msgcontent="Bureau: {{ nombureau }}, Rattachement: {{ dirpm }} &#13;Comptabilité à valider: &#13; {{ leftYears }} années {{ leftMonths }} mois {{ leftDays }} jours"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button></td> #}
                                 <td><button type="button" class="btn btn-light" data-bs-toggle="tooltip" title="Notifier par email" data-toggle="modal" data-target="#exampleModal" data-sender="interco@paositramalagasy.mg" data-recipient="ddpwebetmultimedia@gmail.com" data-subject="Interco: Situation au " data-msgcontent="Bureau: {{ nombureau }}, Rattachement: {{ dirpm }} &#13; La derniére fois que vous avez soumis votre Comptabilité remonte à &#13; {{ leftYears }} années {{ leftMonths }} mois {{ leftDays }} jours"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button></td>
@@ -123,9 +131,9 @@
         {% endif %}
         <div id="legende2"><span class="bg-danger year">Rouge:</span> ({{ countYMD.years }}) Retard de plus d'un an , <span class="bg-primary month">Bleue:</span> ({{ countYMD.months }}) Retard de plus d'un mois, <span class="bg-warning week">Jaune:</span> ({{ countYMD.weeks }}) Retard de plus d'une semaine, <span class="bg-success day">Verte:</span> ({{ countYMD.lessOneWeek }}) Moin d'une semaine, <span class="border border-info noday">Aucune:</span> ({{ countYMD.days }}) A jour</div>
         </br>
-
+        <!--
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-recipient="@mdo">Open modal</button>
-
+        -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">

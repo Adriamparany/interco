@@ -1,12 +1,14 @@
 <?php
    namespace App\Controller;
 
-   use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Tblcash;
+use Symfony\Component\Routing\Annotation\Route;
    use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
    use Symfony\Component\HttpFoundation\Response;
    use Twig\Environment;
    use App\Entity\Users;
-   use App\Repository\TblvalidationRepository;
+use App\Repository\TblcashRepository;
+use App\Repository\TblvalidationRepository;
 
 class PageController extends AbstractController{
       /**
@@ -111,5 +113,29 @@ class PageController extends AbstractController{
          [ 'controller_name' => 'PageController', 'results' => $tblvalidation
          ]);
       }
+
+      /**
+       * @Route("/accounting/{slug}/{date}", name="showaccounting")
+      */
+      public function showAccountingSituation(TblcashRepository $tblcashrepository, $slug, $date=''){
+         $codique_bureau_dirpm = explode('-',$slug);
+         $codique=$codique_bureau_dirpm[0];
+         $bureau=$codique_bureau_dirpm[1];
+         $rattachement =$codique_bureau_dirpm[2];
+         $accounting = $tblcashrepository->findAccountingSituationForOneCodique($codique, $date);
+         //dump($bureau);
+         if (!$accounting) {
+            //throw $this->createNotFoundException('La table est vide');
+            $accounting=array();
+            return $this->render('accountingsituation.html.twig',
+            [ 'controller_name' => 'PageController', 'results' => $accounting,
+            ]);
+         }
+         
+         return $this->render('accountingsituation.html.twig',
+         [ 'controller_name' => 'PageController', 'results' => $accounting, 'office'=>"alasora", 'rattachement'=>$rattachement
+         ]);
+      }
+      
 
    }

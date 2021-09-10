@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="content">
+        {% if results is defined and results|length > 0 %}
+            {% if route_name is defined and route_name == 'showvalidation'%}
+                {% else %}
+                <a class="nav-link" href="{{path('page')}}"><i class="fa fa-fw fa-arrow-left"></i>Retour</a>
+                {% endif %}
+
+            {# two types of results printing format, if results length=1 => 2nd format #}
+            {% if results|length > 1 %}            
+                {{ results|length  }} lignes           
+                <input type="text" name="search" placeholder="Rechercher..">
+
+                
+                
+                <div class="table-responsive">
+                    <!--Table-->
+                    <table class="table table-striped">
+                        <!--Table head-->
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            {% for resultkey,value in results[0] %}
+                                <th class="th-lg"> {{ resultkey }} </th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <!--Table head-->
+
+                        <!--Table body-->
+                        <tbody id="myTable">
+                            {% for indice,arrayRes in results %}
+                                <tr>
+                                    <th scope="row"> {{ indice + 1 }}</th>
+                                    {% for key,value in arrayRes %}
+                                        {% if key == 'date' %}
+                                            <td>{{ value|format_datetime('short', 'none', locale='fr') }}</td> 
+                                        {% else %}
+                                            <td>{{ value }}</td>
+                                        {% endif %} 
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                        <!--Table body-->
+                    </table>
+                    <!--Table-->
+                </div>
+            {% elseif results|length==1 %}
+                <div class="row justify-content-md-center">
+                    <center><h2>SITUATION COMPTABLE</h2></center>
+                    <div class="col-6 col-sm-3 bg-warning ">BUREAU:</div>
+                    <div class="col-6 col-sm-3 bg-warning ">{{ office }}</div>
+                    <div class="w-100"></div>
+                    <div class="col-6 col-sm-3 bg-warning ">RATTACHEMENT:</div>
+                    <div class="col-6 col-sm-3 bg-warning ">{{ rattachement }}</div>
+                    <div>.</div>
+                    {% set total=0 %}
+                    {% for indice,arrayRes in results %}
+                        {% set i=0 %}
+                        {% for key,value in arrayRes %}
+                            {% set i = i+1 %}
+                            {% if i is odd %}
+                                {% set bg ='bg-secondary text-white' %}
+                            {% else %}
+                                {% set bg ='bg-white text-dark' %}
+                            {% endif %}
+                            <div class="col-6 col-sm-3 {{ bg }} bg-gradient fw-bold"> {{ key }}</div>
+                            {% if key == 'date' %}
+                                <div class="col-6 col-sm-3 {{ bg }} bg-gradient">{{ value|format_datetime('short', 'none', locale='fr') }}</div> 
+                            {% else %}
+                                <div class="col-6 col-sm-3 {{ bg }} bg-gradient">{{ value }}</div>
+                                {% set total = total + value %}
+                            {% endif %} 
+                            <!-- Force next columns to break to new line -->
+                            <div class="w-100"></div>
+                        {% endfor %}
+                    {% endfor %}
+                    <div class="col-6 col-sm-3 bg-info bg-gradient">TOTAL:</div>
+                    <div class="col-6 col-sm-3 bg-info bg-gradient">{{ total }}</div>
+                </div>
+            {% endif %}         
+        {% else %}
+            <a class="nav-link" href="{{path('page')}}"><i class="fa fa-fw fa-arrow-left"></i>Retour</a>
+            <div class="col-6 col-sm-3 bg-info bg-gradient">Accune information n'est disponible</div>
+        {% endif %}  
+    <div>
+{% endblock %}
