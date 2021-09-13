@@ -61,7 +61,7 @@ class TblvalidationRepository extends ServiceEntityRepository
 
     public function findAllValidationInnerJoin()
     {
-        $dql = 'SELECT val1.codique, val1.idgest,val1.iduser, val1.dateval, val1.status, bur.nombureau, us.nomuser, gest.idgestion, gest.nomrec
+        $dql = 'SELECT val1.codique, val1.idgest,val1.iduser, val1.dateval date_validation, val1.status, bur.nombureau, us.nomuser, gest.idgestion, gest.nomrec
         FROM  App\Entity\Tblvalidation val1 LEFT OUTER JOIN
          App\Entity\Tblgestionbur gest WITH val1.idgest = gest.idgestion LEFT OUTER JOIN
          App\Entity\Tbluser us WITH val1.iduser = us.iduser LEFT OUTER JOIN
@@ -75,7 +75,7 @@ class TblvalidationRepository extends ServiceEntityRepository
     public function findAllLastValidationForEachCodique()
     {
         //$dql = "SELECT val1.codique, val1.iduser, val1.dateval, bur.nombureau, us.nomuser, gest.nomrec, rat.dirpm, us.passuser as pw
-        $dql = "SELECT val1.codique, val1.dateval, bur.nombureau, rat.dirpm
+        $dql = "SELECT val1.codique, val1.dateval date_validation, bur.nombureau, rat.dirpm
         FROM  App\Entity\Tblvalidation val1 LEFT OUTER JOIN
         App\Entity\Tblgestionbur gest WITH val1.idgest = gest.idgestion LEFT OUTER JOIN
         App\Entity\Tbluser us WITH val1.iduser = us.iduser LEFT OUTER JOIN
@@ -96,7 +96,7 @@ class TblvalidationRepository extends ServiceEntityRepository
     {
         //$dql = "SELECT val1.codique, val1.iduser, val1.dateval, bur.nombureau, us.nomuser, gest.nomrec, rat.dirpm, us.passuser as pw
         //$dql = "SELECT val1.codique, val1.dateval, bur.nombureau, rat.dirpm
-        $dql = "SELECT val1.codique, val1.iduser, val1.dateval, bur.nombureau, us.nomuser, gest.nomrec, rat.dirpm, us.passuser as pw
+        $dql = "SELECT val1.codique, val1.iduser, val1.dateval date_validation, bur.nombureau, us.nomuser, gest.nomrec, rat.dirpm, us.passuser as pw
         FROM  App\Entity\Tblvalidation val1 LEFT OUTER JOIN
         App\Entity\Tblgestionbur gest WITH val1.idgest = gest.idgestion LEFT OUTER JOIN
         App\Entity\Tbluser us WITH val1.iduser = us.iduser LEFT OUTER JOIN
@@ -113,7 +113,7 @@ class TblvalidationRepository extends ServiceEntityRepository
 
     public function findAllLastValidationForEachGroup($group)
     {
-        $dql = "SELECT val1.codique, val1.dateval, bur.nombureau, rat.dirpm
+        $dql = "SELECT val1.codique, val1.dateval date_validation, bur.nombureau, rat.dirpm
         FROM  App\Entity\Tblvalidation val1 LEFT OUTER JOIN
         App\Entity\Tblgestionbur gest WITH val1.idgest = gest.idgestion LEFT OUTER JOIN
         App\Entity\Tbluser us WITH val1.iduser = us.iduser LEFT OUTER JOIN
@@ -131,7 +131,7 @@ class TblvalidationRepository extends ServiceEntityRepository
 
     public function findAllLastValidationForOneCodique($codique)
     {
-        $dql = 'SELECT val1.codique, val1.dateval, bur.nombureau, rat.dirpm
+        $dql = 'SELECT val1.codique, val1.dateval date_validation, bur.nombureau, rat.dirpm
         FROM  App\Entity\Tblvalidation val1 LEFT OUTER JOIN
         App\Entity\Tblgestionbur gest WITH val1.idgest = gest.idgestion LEFT OUTER JOIN
         App\Entity\Tbluser us WITH val1.iduser = us.iduser LEFT OUTER JOIN

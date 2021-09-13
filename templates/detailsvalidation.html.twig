@@ -31,7 +31,7 @@
                             <tr>
                                 <th scope="row"> {{ indice + 1 }}</th>
                                 {% for key,value in arrayRes %}
-                                    {% if key == 'dateval' %}
+                                    {% if key == 'date_validation' %}
                                         <td>{{ value|format_datetime('short', 'none', locale='fr') }}</td> 
                                     {% else %}
                                         <td>{{ value }}</td>

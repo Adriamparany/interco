@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div id="content">
+    <div id="content" style="height: 800px; overflow: scroll;">
         {% if results is defined and results|length > 0 %}
             {% if route_name is defined and route_name == 'showvalidation'%}
                 {% else %}
@@ -68,19 +68,19 @@
                             {% else %}
                                 {% set bg ='bg-white text-dark' %}
                             {% endif %}
-                            <div class="col-6 col-sm-3 {{ bg }} bg-gradient fw-bold"> {{ key }}</div>
+                            <div class="col-6 col-sm-3 {{ bg }} bg-gradient fw-bold"> {{ key|replace({'_':' '}) }}</div>
                             {% if key == 'date' %}
                                 <div class="col-6 col-sm-3 {{ bg }} bg-gradient">{{ value|format_datetime('short', 'none', locale='fr') }}</div> 
                             {% else %}
-                                <div class="col-6 col-sm-3 {{ bg }} bg-gradient">{{ value }}</div>
                                 {% set total = total + value %}
+                                <div class="col-6 col-sm-3 {{ bg }} bg-gradient">{{ value|number_format(2, '.', ' ') }}</div>                  
                             {% endif %} 
                             <!-- Force next columns to break to new line -->
                             <div class="w-100"></div>
                         {% endfor %}
                     {% endfor %}
                     <div class="col-6 col-sm-3 bg-info bg-gradient">TOTAL:</div>
-                    <div class="col-6 col-sm-3 bg-info bg-gradient">{{ total }}</div>
+                    <div class="col-6 col-sm-3 bg-info bg-gradient">{{ total|number_format(2, '.', ' ') }}</div>
                 </div>
             {% endif %}         
         {% else %}

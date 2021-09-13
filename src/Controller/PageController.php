@@ -133,7 +133,7 @@ class PageController extends AbstractController{
          }
          
          return $this->render('accountingsituation.html.twig',
-         [ 'controller_name' => 'PageController', 'results' => $accounting, 'office'=>"alasora", 'rattachement'=>$rattachement
+         [ 'controller_name' => 'PageController', 'results' => $accounting, 'office'=>$bureau, 'rattachement'=>$rattachement
          ]);
       }
       

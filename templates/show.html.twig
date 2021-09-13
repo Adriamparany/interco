@@ -1,10 +1,11 @@
 {% extends 'base.html.twig' %}
 {% set countYMD = {'years':0, 'months':0, 'weeks':0, 'lessOneWeek':0, 'days':0} %}
+{% set dico = {codique:"Codique",dateval:"Date de validation", date_validation:"Date de validation", nombureau:"Bureau"} %}
 {% block body %}
     <div id="content">
         {% if results is defined and results|length > 0 %}
-            {{ results|length  }} lignes
-
+            {{ results|length  }} lignes           
+            {{ dico.codique }}
             <input type="text" name="search" placeholder="Rechercher..">
             <div id="legende"></div>
             <div class="table-responsive">
@@ -32,8 +33,12 @@
                                         <option value="CPIhorombe">CPIhorombe</option>
                                     </select>
                                 </th>
-                            {% else %}  
-                                <th class="th-lg"> {{ resultkey }} </th> 
+                            {% else %} 
+                                {% if resultkey in dico|keys %}
+                                    <th class="th-lg"> {{ dico[resultkey] }} </th> 
+                                {% else %} 
+                                    <th class="th-lg"> {{ resultkey }} </th> 
+                                {% endif %} 
                             {% endif %}                           
                         {% endfor %}
                         <th>Observations</th>
@@ -50,7 +55,7 @@
                                 <th scope="row"> {{ indice + 1 }}</th>
                                 {% set startDate = date() %}
                                 {% for key,value in arrayRes %}
-                                    {% if key == 'dateval' %}
+                                    {% if key == 'date_validation' %}
                                         {% set startDate = value|format_date() %}
                                         <td>{{ value|format_datetime('short', 'none', locale='fr') }}</td>
                                     {% else %}
@@ -102,7 +107,7 @@
                                 {% set codique = '' %}
                                 {% set lastValidation  = "now"|date("dd/mm/Y") %}
                                 {% for key,value in arrayRes %}
-                                    {% if key == 'dateval' %}
+                                    {% if key == 'date_validation' %}
                                         {% set startDate = value|format_date() %}
                                         {% set lastValidation = value|format_datetime('short', 'none', locale='fr') %}
                                     {% elseif key == 'nombureau' %}
