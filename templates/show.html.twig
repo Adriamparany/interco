@@ -120,7 +120,10 @@
                                 {% endfor %}
                                 {# end email-data #}
 
-                                <td><a href="/accounting/{{ codique }}-{{ nombureau }}-{{ dirpm }}/{{ lastValidation|replace({'/':'-'}) }}">Situation comptable</a></td>
+                                <td>
+                                    {# <a href="/accounting/{{ codique }}-{{ nombureau }}-{{ dirpm }}/{{ lastValidation|replace({'/':'-'}) }}">Détails de l'encaisse</a>#} {# Open  "Détails de l'encaisse" in a new page#}
+                                    <a href="" data-toggle="modal" data-target="#accountingsituationmodal" data-codique="{{ codique }}" data-bureau="{{ nombureau }}" data-dirpm="{{ dirpm }}" data-validation="{{ lastValidation|replace({'/':'-'}) }}">Détails de l'encaisse</a>
+                                </td>
                                 {#<td><a href="/emailform"><i class="fa fa-paper-plane" aria-hidden="true"></i></a></td>#}
                                 {# <td><button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" data-sender="[email]@paositramalagasy.mg" data-recipient="ddpwebetmultimedia@gmail.com" data-subject="Interco: Situation au " data-msgcontent="Bureau: {{ nombureau }}, Rattachement: {{ dirpm }} &#13;Comptabilité à valider: &#13; {{ leftYears }} années {{ leftMonths }} mois {{ leftDays }} jours"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button></td> #}
                                 <td><button type="button" class="btn btn-light" data-bs-toggle="tooltip" title="Notifier par email" data-toggle="modal" data-target="#exampleModal" data-sender="interco@paositramalagasy.mg" data-recipient="ddpwebetmultimedia@gmail.com" data-subject="Interco: Situation au " data-msgcontent="Bureau: {{ nombureau }}, Rattachement: {{ dirpm }} &#13; La derniére fois que vous avez soumis votre Comptabilité remonte à &#13; {{ leftYears }} années {{ leftMonths }} mois {{ leftDays }} jours"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button></td>
@@ -173,11 +176,26 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
                     <button type="button" id="submitForm" data-target="#mailing_form" class="btn btn-primary">Send message</button>
                 </div>
                 </div>
             </div>
+        </div>      
+        
+        <div class="modal fade" id="accountingsituationmodal"  aria-hidden="true">           
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="formModal_title">DETAILS DE L'ENCAISSE</h4>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                    </div>
+                    <div class="modal-body"><table class="table table-striped tbaccounting"></table></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            <div>
         </div>
     <div>
     <script>//cannot be inserted outside the block if not countYMD's values would be zero
@@ -196,34 +214,34 @@
         $(document).ready(function(e){
             console.log('document ready on show.html.twig')
             $('#exampleModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var recipient = button.data('recipient') // Extract info from data-* attributes
-            var sender = button.data('sender')
+                var button = $(event.relatedTarget) // Button that triggered the modal
+                var recipient = button.data('recipient') // Extract info from data-* attributes
+                var sender = button.data('sender')
 
-            var subject = button.data('subject')
-            var today = new Date()
-            var dd = String(today.getDate()).padStart(2, '0')
-            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-            var yyyy = today.getFullYear()
-            today = dd + '-' + mm + '-' + yyyy
-            subject = subject + today
+                var subject = button.data('subject')
+                var today = new Date()
+                var dd = String(today.getDate()).padStart(2, '0')
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                var yyyy = today.getFullYear()
+                today = dd + '-' + mm + '-' + yyyy
+                subject = subject + today
 
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-            var message = button.data('msgcontent')
-            message = message + " depuis l'initialisation de la comptabilité du bureau."
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                var message = button.data('msgcontent')
+                message = message + " depuis l'initialisation de la comptabilité du bureau."
 
-            var modal = $(this)
-            modal.find('.modal-title').text('Notifier ' + recipient)
-            modal.find('.form-group>[for="sender-name"]').text('De:')
-            modal.find('.form-group>[for="recipient-name"]').text('à:')
-            modal.find('.form-group>[for="subject-name"]').text('Objet:')
-            modal.find('.modal-footer [data-dismiss="modal"]').text('Fermer')
-            modal.find('.modal-footer .btn-primary').text('Envoyer')
-            modal.find('.modal-body input#recipient-name').val(recipient)
-            modal.find('.modal-body input#sender-name').val(sender)
-            modal.find('.modal-body textarea#message-text').val(message)
-            modal.find('.modal-body input#subject-name').val(subject)
+                var modal = $(this)
+                modal.find('.modal-title').text('Notifier ' + recipient)
+                modal.find('.form-group>[for="sender-name"]').text('De:')
+                modal.find('.form-group>[for="recipient-name"]').text('à:')
+                modal.find('.form-group>[for="subject-name"]').text('Objet:')
+                modal.find('.modal-footer [data-dismiss="modal"]').text('Fermer')
+                modal.find('.modal-footer .btn-primary').text('Envoyer')
+                modal.find('.modal-body input#recipient-name').val(recipient)
+                modal.find('.modal-body input#sender-name').val(sender)
+                modal.find('.modal-body textarea#message-text').val(message)
+                modal.find('.modal-body input#subject-name').val(subject)
             })
 
             //submit
@@ -260,6 +278,75 @@
             $("#submitForm").on('click', function() {
                 $("#mailing_form").submit();
             });
+
+            $('#accountingsituationmodal').on('show.bs.modal', function (event) {
+                var cible = $(event.relatedTarget) // Button that triggered the modal
+                $( ".tbaccounting" ).empty();//empty table
+                $("#accountingsituationmodal .modal-title").empty();
+                var row = ''
+                var totalrow = ''
+                console.log(cible.data('codique'))
+                $.ajax({
+                    url: "{{ path('showaccountingjson') }}",
+                    type: "POST",
+                    data: {codique: cible.data("codique"), date: cible.data("validation") },
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) {
+                        console.log(response.data[0])
+                        $("#accountingsituationmodal .modal-body").addClass('row')
+                        $("#accountingsituationmodal .modal-title").text('Détails de l\'encaisse - '+'Bureau: '+cible.data('bureau'))
+                        var total =  0
+                        var i=0
+                        $.each(response.data[0], function( key, value ) {   
+                            //alert(typeof(value) + key + ": " + value );                    
+                            if(key == 'date'){
+                                var x = new Date(value)
+                                var dd = String(x.getDate()).padStart(2, '0')
+                                var mm = String(x.getMonth() + 1).padStart(2, '0'); 
+                                var yyyy = x.getFullYear()
+                                value = dd + '-' + mm + '-' + yyyy
+                            }else{
+                                if(value != null){         
+                                    value = parseFloat(value) //cast values into number except date
+                                }   
+                            }
+                            
+                            key = key.replace(/_/g, " ")  //replace all "_" with space
+                            var bg = ""
+                            
+                            var printvalue = 0                          
+                            
+                            if (typeof value === 'number'){
+                                total = total + value
+                                printvalue = numberWithSpaces(value.toFixed(2))
+                            }else{
+                                printvalue = value
+                            }
+                            console.log(total)
+                            if(isEven(i)){
+                                bg = "bg-secondary text-white"
+                            }else{
+                                bg = "bg-white text-dark"
+                            }
+                            row = $('<tr>');
+                            row.append($('<td class="'+bg+'" id=' + key + '>').html(key));
+                            row.append($('<td class="'+bg+'" id=' + value + '>').html(printvalue));
+                            row.append($('</tr>'));
+                            $("#accountingsituationmodal .modal-body table").append(row) 
+                            i = i + 1                    
+                        }); 
+                        total = total.toFixed(2) 
+                        totalrow = $('<tr>');
+                        totalrow.append($('<td class="bg-info">').html("TOTAL"))
+                        totalrow.append($('<td class="bg-info" id="total">').html(numberWithSpaces(total)))
+                        totalrow.append($('</tr>'));
+                        $("#accountingsituationmodal .modal-body table").append(totalrow) 
+                    },
+                    error: function(jqXHR, status, error) {
+                        console.log(status + ": " + error);
+                    }
+                })
+            })
         })
 
         //get all data from form, returns json object
@@ -287,6 +374,22 @@
                 a[i].style.display = "none";
                 }
             }
+        }
+
+        function isEven(n) {
+            return n % 2 == 0;
+        }
+
+        function isOdd(n) {
+            return Math.abs(n % 2) == 1;
+        }
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function numberWithSpaces(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
         }
     </script>
     {#

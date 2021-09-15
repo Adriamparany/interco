@@ -76,7 +76,7 @@ class  TblcashRepository extends ServiceEntityRepository
         and ccp2.isholder=2) cheque_ccp_en_instance_de_reglement
         ,
         (SELECT 
-            c1.stival 
+            sum(c1.stival)
         FROM   App\Entity\Tblcashaccount c1
         WHERE c1.codique= $codique
         and c1.dateoperation = '$date') cheque_bancaire_en_instance_de_reglement

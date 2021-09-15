@@ -2,13 +2,14 @@
    namespace App\Controller;
 
 use App\Entity\Tblcash;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\TblcashRepository;
    use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
    use Symfony\Component\HttpFoundation\Response;
    use Twig\Environment;
    use App\Entity\Users;
-use App\Repository\TblcashRepository;
 use App\Repository\TblvalidationRepository;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class PageController extends AbstractController{
       /**
@@ -135,6 +136,34 @@ class PageController extends AbstractController{
          return $this->render('accountingsituation.html.twig',
          [ 'controller_name' => 'PageController', 'results' => $accounting, 'office'=>$bureau, 'rattachement'=>$rattachement
          ]);
+      }
+
+      /**
+       * @Route("/accountingapi", name="showaccountingjson")
+      */
+      public function showAccountingSituationJson(TblcashRepository $tblcashrepository, Request $request){
+         $content = $request->getContent(false);
+         //dump($content);
+         $content_arr = explode('&',$content);
+        $data_array=array();
+        foreach ($content_arr as $key => $value) {
+            $x = explode('=',urldecode($value));
+            $a=$x[0]; 
+            $b=$x[1];
+            $data_array += [$a=>$b];           
+        }
+        dump($data_array);
+         $codique=$data_array['codique'];
+         $date=$data_array['date'];
+         $rattachement ="Mon bureau";
+         $accounting = $tblcashrepository->findAccountingSituationForOneCodique($codique, $date);
+         //dump($bureau);
+         if (!$accounting) {
+            //throw $this->createNotFoundException('La table est vide');
+            return $this->json(['data'=>$accounting, 'error'=>'Aucune donnée n\'est disponible ']);
+         }
+         
+         return $this->json(['data'=>$accounting]);
       }
       
 
