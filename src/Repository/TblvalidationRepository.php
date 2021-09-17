@@ -115,12 +115,14 @@ class TblvalidationRepository extends ServiceEntityRepository
 
     public function findAllLastValidationForEachGroup($group)
     {
-        $dql = "SELECT val1.codique, val1.dateval date_validation, bur.nombureau, rat.dirpm
+        //$dql = "SELECT val1.codique, val1.dateval date_validation, bur.nombureau, rat.dirpm
+        $dql = "SELECT distinct val1.codique, val1.dateval date_validation, bur.nombureau, rat.dirpm, gest.reservenum MA, cash.stival as numeraire
         FROM  App\Entity\Tblvalidation val1 LEFT OUTER JOIN
         App\Entity\Tblgestionbur gest WITH val1.idgest = gest.idgestion LEFT OUTER JOIN
         App\Entity\Tbluser us WITH val1.iduser = us.iduser LEFT OUTER JOIN
         App\Entity\Tblbureau bur WITH val1.codique = bur.ncodique LEFT OUTER JOIN 
-        App\Entity\Rattachement rat WITH val1.codique = rat.codique
+        App\Entity\Rattachement rat WITH val1.codique = rat.codique LEFT OUTER JOIN
+        App\Entity\Tblcash cash WITH (val1.codique = cash.codique AND val1.dateval=cash.dateoperation)
          WHERE val1.dateval=(SELECT MAX(val2.dateval)
             FROM App\Entity\Tblvalidation val2 WHERE val2.codique=val1.codique)
             AND rat.dirpm LIKE '".$group."'

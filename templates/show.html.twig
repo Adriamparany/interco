@@ -4,8 +4,7 @@
 {% block body %}
     <div id="content">
         {% if results is defined and results|length > 0 %}
-            {{ results|length  }} lignes           
-            {{ dico.codique }}
+            {{ results|length  }} lignes   
             <input type="text" name="search" placeholder="Rechercher..">
             <div id="legende"></div>
             <div class="table-responsive">
@@ -34,6 +33,7 @@
                                     </select>
                                 </th>
                             {% elseif resultkey not in ["MA", "numeraire"]  %} 
+                            {# {% else %} #}
                                 {% if resultkey in dico|keys %}
                                     <th class="th-lg"> {{ dico[resultkey] }} </th> 
                                 {% else %} 
@@ -59,6 +59,7 @@
                                         {% set startDate = value|format_date() %}
                                         <td>{{ value|format_datetime('short', 'none', locale='fr') }}</td>
                                     {% elseif key not in ["MA", "numeraire"] %} 
+                                    {# {% else %} #}
                                         {% if key == 'codique' %}
                                             <td><a data-bs-toggle="tooltip" title="Voir les dix derniers validations" href="/page/{{ value }}">{{ value }}</a></td>
                                         {% else %}
@@ -119,7 +120,7 @@
                                     {% elseif key == 'codique' %}
                                         {% set codique = value %}
                                     {% elseif key == 'MA' %}
-                                        {% set MA = value|number_format(2, '.', ' ') %}
+                                        {% set MA = value %}
                                     {% elseif key == 'numeraire' %}
                                         {% set numeraire = value %}
                                     {% endif %}
@@ -129,7 +130,7 @@
                                 <td>
                                     {# <a href="/accounting/{{ codique }}-{{ nombureau }}-{{ dirpm }}/{{ lastValidation|replace({'/':'-'}) }}">Détails de l'encaisse</a>#} {# Open  "Détails de l'encaisse" in a new page#}
                                     <a href="" data-toggle="modal" data-target="#accountingsituationmodal" data-codique="{{ codique }}" data-bureau="{{ nombureau }}" data-dirpm="{{ dirpm }}" data-validation="{{ lastValidation|replace({'/':'-'}) }}" data-ma="{{ MA }}">Détails de l'encaisse</a>
-                                    </br><span id="{{ codique }}" class="bg-danger text-warning {{ numeraire >= MA ? 'collapse' : '' }}collapse" >Max autorisé dépassé</span>
+                                    </br><span id="{{ codique }}" class="bg-danger text-warning {{ numeraire <= MA ? 'collapse' : '' }}" >Max autorisé dépassé</span>
                                 </td>
                                 {#<td><a href="/emailform"><i class="fa fa-paper-plane" aria-hidden="true"></i></a></td>#}
                                 {# <td><button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" data-sender="[email]@paositramalagasy.mg" data-recipient="ddpwebetmultimedia@gmail.com" data-subject="Interco: Situation au " data-msgcontent="Bureau: {{ nombureau }}, Rattachement: {{ dirpm }} &#13;Comptabilité à valider: &#13; {{ leftYears }} années {{ leftMonths }} mois {{ leftDays }} jours"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button></td> #}
@@ -302,7 +303,7 @@
                         console.log(response.data)
                         console.log(response.check)
                         $("#accountingsituationmodal .modal-body").addClass('row')
-                        $("#accountingsituationmodal .modal-title").text('Détails de l\'encaisse - '+'Bureau: '+cible.data('bureau')+ ' (M.A: ' + cible.data("ma")+' ariary)')
+                        $("#accountingsituationmodal .modal-title").text('Détails de l\'encaisse - '+'Bureau: '+cible.data('bureau')+ ' (M.A: ' + numberWithSpaces((cible.data("ma")).toFixed(2))+' ariary)')
                         var total =  0
                         var i=0
                         $.each(response.data[0], function( key, value ) {   
