@@ -157,13 +157,15 @@ class PageController extends AbstractController{
          $date=$data_array['date'];
          $rattachement ="Mon bureau";
          $accounting = $tblcashrepository->findAccountingSituationForOneCodique($codique, $date);
+         $checking = $tblcashrepository->findNumeraireByDateForOneCodique($codique, $date);
+
          //dump($bureau);
          if (!$accounting) {
             //throw $this->createNotFoundException('La table est vide');
             return $this->json(['data'=>$accounting, 'error'=>'Aucune donnée n\'est disponible ']);
          }
          
-         return $this->json(['data'=>$accounting]);
+         return $this->json(['data'=>$accounting, 'check'=>$checking]);
       }
       
 

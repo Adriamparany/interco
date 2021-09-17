@@ -33,7 +33,7 @@
                                         <option value="CPIhorombe">CPIhorombe</option>
                                     </select>
                                 </th>
-                            {% else %} 
+                            {% elseif resultkey not in ["MA", "numeraire"]  %} 
                                 {% if resultkey in dico|keys %}
                                     <th class="th-lg"> {{ dico[resultkey] }} </th> 
                                 {% else %} 
@@ -58,7 +58,7 @@
                                     {% if key == 'date_validation' %}
                                         {% set startDate = value|format_date() %}
                                         <td>{{ value|format_datetime('short', 'none', locale='fr') }}</td>
-                                    {% else %}
+                                    {% elseif key not in ["MA", "numeraire"] %} 
                                         {% if key == 'codique' %}
                                             <td><a data-bs-toggle="tooltip" title="Voir les dix derniers validations" href="/page/{{ value }}">{{ value }}</a></td>
                                         {% else %}
@@ -106,6 +106,8 @@
                                 {% set dirpm = '' %}
                                 {% set codique = '' %}
                                 {% set lastValidation  = "now"|date("dd/mm/Y") %}
+                                {% set MA  = 0 %}
+                                {% set numeraire  = 0 %}
                                 {% for key,value in arrayRes %}
                                     {% if key == 'date_validation' %}
                                         {% set startDate = value|format_date() %}
@@ -116,13 +118,18 @@
                                         {% set dirpm = value %}
                                     {% elseif key == 'codique' %}
                                         {% set codique = value %}
+                                    {% elseif key == 'MA' %}
+                                        {% set MA = value|number_format(2, '.', ' ') %}
+                                    {% elseif key == 'numeraire' %}
+                                        {% set numeraire = value %}
                                     {% endif %}
                                 {% endfor %}
                                 {# end email-data #}
 
                                 <td>
                                     {# <a href="/accounting/{{ codique }}-{{ nombureau }}-{{ dirpm }}/{{ lastValidation|replace({'/':'-'}) }}">Détails de l'encaisse</a>#} {# Open  "Détails de l'encaisse" in a new page#}
-                                    <a href="" data-toggle="modal" data-target="#accountingsituationmodal" data-codique="{{ codique }}" data-bureau="{{ nombureau }}" data-dirpm="{{ dirpm }}" data-validation="{{ lastValidation|replace({'/':'-'}) }}">Détails de l'encaisse</a>
+                                    <a href="" data-toggle="modal" data-target="#accountingsituationmodal" data-codique="{{ codique }}" data-bureau="{{ nombureau }}" data-dirpm="{{ dirpm }}" data-validation="{{ lastValidation|replace({'/':'-'}) }}" data-ma="{{ MA }}">Détails de l'encaisse</a>
+                                    </br><span id="{{ codique }}" class="bg-danger text-warning {{ numeraire >= MA ? 'collapse' : '' }}collapse" >Max autorisé dépassé</span>
                                 </td>
                                 {#<td><a href="/emailform"><i class="fa fa-paper-plane" aria-hidden="true"></i></a></td>#}
                                 {# <td><button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" data-sender="[email]@paositramalagasy.mg" data-recipient="ddpwebetmultimedia@gmail.com" data-subject="Interco: Situation au " data-msgcontent="Bureau: {{ nombureau }}, Rattachement: {{ dirpm }} &#13;Comptabilité à valider: &#13; {{ leftYears }} années {{ leftMonths }} mois {{ leftDays }} jours"> <i class="fa fa-paper-plane" aria-hidden="true"></i></button></td> #}
@@ -208,7 +215,7 @@
             $('#legende span.week').after('<b> '+ {{ countYMD.weeks }} + '</b>')
             $('#legende span.day').after('<b> '+ {{ countYMD.lessOneWeek }} + '</b>')
             $('#legende span.noday').after('<b> '+ {{ countYMD.days }} + '</b>')
-            */
+            */         
         }
 
         $(document).ready(function(e){
@@ -285,16 +292,17 @@
                 $("#accountingsituationmodal .modal-title").empty();
                 var row = ''
                 var totalrow = ''
-                console.log(cible.data('codique'))
+                console.log(cible.data('ma'))
                 $.ajax({
                     url: "{{ path('showaccountingjson') }}",
                     type: "POST",
-                    data: {codique: cible.data("codique"), date: cible.data("validation") },
+                    data: {codique: cible.data("codique"), date: cible.data("validation")},
                     contentType: "application/json; charset=utf-8",
                     success: function(response) {
-                        console.log(response.data[0])
+                        console.log(response.data)
+                        console.log(response.check)
                         $("#accountingsituationmodal .modal-body").addClass('row')
-                        $("#accountingsituationmodal .modal-title").text('Détails de l\'encaisse - '+'Bureau: '+cible.data('bureau'))
+                        $("#accountingsituationmodal .modal-title").text('Détails de l\'encaisse - '+'Bureau: '+cible.data('bureau')+ ' (M.A: ' + cible.data("ma")+' ariary)')
                         var total =  0
                         var i=0
                         $.each(response.data[0], function( key, value ) {   
@@ -317,23 +325,35 @@
                             var printvalue = 0                          
                             
                             if (typeof value === 'number'){
-                                total = total + value
+                                if(key.replace(/ /g, "") != 'TotalUV' && key.replace(/ /g, "") != 'MA'){
+                                    total = total + value
+                                    //alert(key)
+                                }
+                                
                                 printvalue = numberWithSpaces(value.toFixed(2))
                             }else{
                                 printvalue = value
                             }
                             console.log(total)
                             if(isEven(i)){
-                                bg = "bg-secondary text-white"
+                                if(i == 0){
+                                    bg = "fw-bold"
+                                }else{
+                                    bg = "bg-secondary text-white"
+                                }
                             }else{
                                 bg = "bg-white text-dark"
                             }
-                            row = $('<tr>');
-                            row.append($('<td class="'+bg+'" id=' + key + '>').html(key));
-                            row.append($('<td class="'+bg+'" id=' + value + '>').html(printvalue));
-                            row.append($('</tr>'));
-                            $("#accountingsituationmodal .modal-body table").append(row) 
-                            i = i + 1                    
+
+                            //manage printing
+                            if(key != 'MA'){
+                                row = $('<tr>');
+                                row.append($('<td class="'+bg+'" id=' + key + '>').html(key));
+                                row.append($('<td class="'+bg+'" id=' + value + '>').html(printvalue));
+                                row.append($('</tr>'));
+                                $("#accountingsituationmodal .modal-body table").append(row) 
+                                i = i + 1 
+                            }                                          
                         }); 
                         total = total.toFixed(2) 
                         totalrow = $('<tr>');
@@ -346,7 +366,11 @@
                         console.log(status + ": " + error);
                     }
                 })
-            })
+            }) 
+            //alert on MAXIMUM AUTORISE
+            //alert('kaiz e')
+            
+            //$("#myTable a[data-target='#accountingsituationmodal']").html('fetra')          
         })
 
         //get all data from form, returns json object

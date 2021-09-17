@@ -6,6 +6,7 @@ use App\Entity\Tblcash;
 use App\Entity\Tblstocks;
 use App\Entity\Tblcreances;
 use App\Entity\Tblstocksuv;
+use App\Entity\Tblgestionbur;
 use App\Entity\Tblcashaccount;
 use App\Entity\Tblcreancesccp;
 use App\Entity\Tblcreancesspec;
@@ -62,6 +63,11 @@ class  TblcashRepository extends ServiceEntityRepository
         $dql = "
         SELECT 
         cash.dateoperation date
+        ,
+        (SELECT gest1.reservenum from App\Entity\Tblgestionbur gest1
+        WHERE gest1.ncodique = $codique
+        and gest1.datedebgest = (SELECT MAX(gest2.datedebgest) FROM App\Entity\Tblgestionbur gest2 WHERE gest2.ncodique = $codique)
+        ) MA
         ,
         cash.stival numeraire      
         ,
@@ -150,6 +156,22 @@ class  TblcashRepository extends ServiceEntityRepository
         FROM     App\Entity\Tblcreancesspecavance c12
         WHERE c12.codique= $codique
         and c12.dateoperation = '$date') Avances_speciales
+
+        FROM    App\Entity\Tblcash cash
+        WHERE cash.codique= $codique
+        and cash.dateoperation = '$date'
+        ";
+        
+        
+        $query = $this->getEntityManager()->createQuery($dql);
+        return $query->execute();
+    }
+
+    public function findNumeraireByDateForOneCodique($codique, $date)
+    {
+        $dql = "
+        SELECT 
+        cash.stival numeraire        
 
         FROM    App\Entity\Tblcash cash
         WHERE cash.codique= $codique
