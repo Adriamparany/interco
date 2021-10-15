@@ -58,7 +58,7 @@ class  TblcashRepository extends ServiceEntityRepository
     }
     */
 
-    public function findAccountingSituationForOnecodique($codique, $date)
+    public function findAccountingSituationForOnecodique($codique, $date, $em=null)
     {
         $dql = "
         SELECT 
@@ -162,12 +162,14 @@ class  TblcashRepository extends ServiceEntityRepository
         and cash.dateoperation = '$date'
         ";
         
-        
-        $query = $this->getEntityManager()->createQuery($dql);
+        if(!isset($em)){
+            $em=$this->getEntityManager();
+        }
+        $query = $em->createQuery($dql);
         return $query->execute();
     }
 
-    public function findNumeraireByDateForOneCodique($codique, $date)
+    public function findNumeraireByDateForOneCodique($codique, $date, $em=null)
     {
         $dql = "
         SELECT 
@@ -178,8 +180,10 @@ class  TblcashRepository extends ServiceEntityRepository
         and cash.dateoperation = '$date'
         ";
         
-        
-        $query = $this->getEntityManager()->createQuery($dql);
+        if(!isset($em)){
+            $em=$this->getEntityManager();
+        }
+        $query = $em->createQuery($dql);
         return $query->execute();
     }
 }

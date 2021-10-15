@@ -3,10 +3,10 @@
 
 use App\Entity\Tblcash;
 use App\Repository\TblcashRepository;
-   use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-   use Symfony\Component\HttpFoundation\Response;
-   use Twig\Environment;
-   use App\Entity\Users;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
+use App\Entity\Users;
 use App\Repository\TblvalidationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,14 +26,25 @@ class PageController extends AbstractController{
       */
       //, methods="POST"
       public function showTblValidation(TblvalidationRepository $tblvalidationrepository, $usrfct='', $cod='',$usr=''){
+         $em = $this->get('doctrine')->getManager('custom');
+         //dump($em);
          if ($usr == 'superadmin') {           
-            $tblvalidation = $tblvalidationrepository->findAllLastValidationForAdmin();
+            $tblvalidation1 = $tblvalidationrepository->findAllLastValidationForAdmin();
+            $tblvalidation2 = $tblvalidationrepository->findAllLastValidationForAdmin($em);
+            $tblvalidation = array_merge($tblvalidation1, $tblvalidation2);
             //$tblvalidation = $tblvalidationrepository->findAllValidationInnerJoin();
          }else{
             if ($usrfct == 'superadmin') {
-               $tblvalidation = $tblvalidationrepository->findAllLastValidationForEachCodique();
+               $tblvalidation1 = $tblvalidationrepository->findAllLastValidationForEachCodique();
+               $tblvalidation2 = $tblvalidationrepository->findAllLastValidationForEachCodique($em);
+               $tblvalidation = array_merge($tblvalidation1, $tblvalidation2);
+               dump($tblvalidation1);
+               dump($tblvalidation2);
+               dump($tblvalidation);
             }elseif($usrfct == 'chefdecentre'){
-               $tblvalidation = $tblvalidationrepository->findAllLastValidationForOneCodique($cod);
+               $tblvalidation1 = $tblvalidationrepository->findAllLastValidationForOneCodique($cod);
+               $tblvalidation2 = $tblvalidationrepository->findAllLastValidationForOneCodique($cod, $em);
+               $tblvalidation = array_merge($tblvalidation1, $tblvalidation2);
                return $this->render('detailsvalidation.html.twig',
                   [ 'controller_name' => 'PageController', 'results' => $tblvalidation, 'route_name'=>'showvalidation'
                ]);
@@ -41,7 +52,9 @@ class PageController extends AbstractController{
                if ($cod != '') {
                   //dd(substr($cod,0,1));
                   $dirpm = array('1'=>'Antananarivo','2'=>'Antsiranana','3'=>'Fianarantsoa','4'=>'Mahajanga','5'=>'Toamasina','6'=>'Toliara','7'=>'CPVakmen','8'=>'CPSofia','9'=>'CPIhorombe','A'=>'CPAnosyAndroy');
-                  $tblvalidation = $tblvalidationrepository->findAllLastValidationForEachGroup($dirpm[substr($cod,0,1)]);
+                  $tblvalidation1 = $tblvalidationrepository->findAllLastValidationForEachGroup($dirpm[substr($cod,0,1)]);
+                  $tblvalidation2 = $tblvalidationrepository->findAllLastValidationForEachGroup($dirpm[substr($cod,0,1)], $em);
+                  $tblvalidation = array_merge($tblvalidation1, $tblvalidation2);
                }
             }          
          }
@@ -89,7 +102,15 @@ class PageController extends AbstractController{
        * @Route("/page/{slug}", name="showdetailsvalidation")
       */
       public function showTblValidationDetails(TblvalidationRepository $tblvalidationrepository, $slug){
-         $tblvalidation = $tblvalidationrepository->findAllLastValidationForOneCodique($slug);
+         dump($slug);
+         if($slug == "10103"){
+            $em = $this->get('doctrine')->getManager('custom');
+         }else{
+            $em = $this->get('doctrine')->getManager();
+         }
+         
+
+         $tblvalidation = $tblvalidationrepository->findAllLastValidationForOneCodique($slug, $em);
          if (!$tblvalidation) {
             throw $this->createNotFoundException('La table est vide');
          }
@@ -142,6 +163,8 @@ class PageController extends AbstractController{
        * @Route("/accountingapi", name="showaccountingjson")
       */
       public function showAccountingSituationJson(TblcashRepository $tblcashrepository, Request $request){
+         $em = $this->get('doctrine')->getManager('custom');//entity manager
+
          $content = $request->getContent(false);
          //dump($content);
          $content_arr = explode('&',$content);
@@ -156,8 +179,12 @@ class PageController extends AbstractController{
          $codique=$data_array['codique'];
          $date=$data_array['date'];
          $rattachement ="Mon bureau";
-         $accounting = $tblcashrepository->findAccountingSituationForOneCodique($codique, $date);
-         $checking = $tblcashrepository->findNumeraireByDateForOneCodique($codique, $date);
+         $accounting1 = $tblcashrepository->findAccountingSituationForOneCodique($codique, $date);
+         $accounting2 = $tblcashrepository->findAccountingSituationForOneCodique($codique, $date, $em);
+         $accounting = array_merge($accounting1, $accounting2);
+         $checking1 = $tblcashrepository->findNumeraireByDateForOneCodique($codique, $date);
+         $checking2 = $tblcashrepository->findNumeraireByDateForOneCodique($codique, $date, $em);
+         $checking = array_merge($checking1, $checking2);
 
          //dump($bureau);
          if (!$accounting) {
