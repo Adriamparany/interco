@@ -5,10 +5,12 @@
  <h1>{#{{ page }}#}</h1>
  
     {% if app.user %}
+        {#
         <div class="mb-3">
             Bienvenu {{ app.user.username }}, <a href="{{ path('app_logout') }}">Se deconnecter</a>
             <a class="nav-link" href="{{path('page')}}"><i class="fa fa-fw fa-search"></i>Suivi</a>
         </div>
+        #}
         <div class="mb-3" id="logged">
             {#
             <pre>
@@ -25,7 +27,7 @@
                 {% set referer = '/log/new/'~ app.user.username ~ '/logout' %}
             {% endif %}
             
-            {{ dump(referer) }}
+            {#{{ dump(referer) }}#}
             Bienvenu, vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ referer }}">Se deconnecter</a>
             <a class="nav-link" href="{{path('page')}}"><i class="fa fa-fw fa-search"></i>Suivi</a>
         </div> 

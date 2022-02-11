@@ -39,10 +39,13 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{path('app_login')}}"><i class="fa fa-fw fa-user"></i>Login</a>
                     </li> 
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{path('loghistory')}}"><i class="fa fa-history" aria-hidden="true"></i>Voir historique</a>
-                    </li>   
+                    {% if app.user%}
+                        {% if app.user.username == 'dg' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{path('log_index')}}"><i class="fa fa-history" aria-hidden="true"></i>Voir historique</a>
+                            </li> 
+                        {% endif %}
+                    {% endif %}
                     </ul>
                 </div>  
             </nav>
