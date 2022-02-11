@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log index{% endblock %}
+
+{% block body %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Datelog</th>
+                <th>Logtype</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+            <tr>
+                <td>{{ log.id }}</td>
+                <td>{{ log.username }}</td>
+                <td>{{ log.datelog ? log.datelog|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ log.logtype }}</td>
+                <td>
+                    <a href="{{ path('log_show', {'id': log.id}) }}">show</a>
+                    {% if isEditable is defined and isEditable %}
+                        <a href="{{ path('log_edit', {'id': log.id}) }}">edit</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    
+    {% if isEditable is defined and isEditable %}
+        <a href="{{ path('log_new') }}">Create new</a>
+    {% endif %}
+{% endblock %}

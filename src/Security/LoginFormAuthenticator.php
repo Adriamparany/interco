@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\Tbluser;
+use Doctrine\Migrations\Tools\Console\Command\UpToDateCommand;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,7 +95,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {   
-        //dump($request);
+        //dd($request->get('username'));
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
@@ -102,7 +103,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
         //throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
         //return new RedirectResponse($this->urlGenerator->generate('showvalidation'));
-        return new RedirectResponse($this->urlGenerator->generate('page'));
+        //todo
+        
+        //return new RedirectResponse($this->urlGenerator->generate('page'));
+        return new RedirectResponse($this->urlGenerator->generate('log_new_api', array('username'=>$request->get('username'), 'logtype'=>'login')));
     }
 
     protected function getLoginUrl()
