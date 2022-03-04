@@ -17,9 +17,19 @@ class LogController extends AbstractController
     #[Route('/', name: 'log_index', methods: ['GET'])]
     public function index(LogRepository $logRepository): Response
     {
-        return $this->render('log/index.html.twig', [
+        return $this->render('log/index2.html.twig', [
             //'logs' => $logRepository->findAll(),
-            'logs' => $logRepository->findBy(array(), array('username' => 'asc', 'datelog'=>'desc')),
+            //'logs' => $logRepository->findBy(array(), array('username' => 'asc', 'datelog'=>'desc')),
+            'results' => $logRepository->findAllLastLogForEachUsername(),
+            'isEditable' => false,
+        ]);
+    }
+
+    #[Route('/details/{username}', name: 'log_details', methods: ['GET'])]
+    public function details(LogRepository $logRepository, $username): Response
+    {
+        return $this->render('log/details.html.twig', [
+            'logs' => $logRepository->findByUsername($username),
             'isEditable' => false,
         ]);
     }
@@ -63,12 +73,13 @@ class LogController extends AbstractController
             if($request->get('logtype') == 'logout'){
                 return $this->redirectToRoute('app_logout', [], Response::HTTP_SEE_OTHER);
             }
-            if($request->get('username') == 'dg'){
+            
+            /*if($request->get('username') == 'dg'){
                 return $this->redirectToRoute('log_index', [], Response::HTTP_SEE_OTHER);
             }else{
                 return $this->redirectToRoute('page', [], Response::HTTP_SEE_OTHER);
-            }
-            
+            }*/
+            return $this->redirectToRoute('page', [], Response::HTTP_SEE_OTHER);
         }
 
         

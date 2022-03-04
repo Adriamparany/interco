@@ -5,7 +5,7 @@ parameters:
     database_host: 154.126.56.88
     database_port: 1433
     #database_name: ComptaTrav
-    database_name: ComptaTravTest
+    database_name: ComptaTrav
     database_user: sa
     database_password: 123Paoma456
 

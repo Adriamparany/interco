@@ -22,7 +22,6 @@
         
         {% block navigation %}
             <nav class="navbar navbar-expand-md bg-dark navbar-dark">    
-                <!--<a class="navbar-brand" href="{#{{path('homepage')}}#}">Compta</a>-->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -32,17 +31,26 @@
                         <a class="nav-link active" href="{{path('homepage')}}"><i class="fa fa-fw fa-home"></i>Acceuil</a>
                     </li>
                     
+                    {#
                     <li class="nav-item">
                         <a class="nav-link" href="{{path('homepage_show', {slug:'contact'})}}"><i class="fa fa-fw fa-envelope"></i>Contact</a>
                     </li>
+                    #}
+ 
+                    {% if app.user%}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{path('app_login')}}"><i class="fa fa-fw fa-user"></i>Se déconnecter</a>
+                        </li> 
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{path('app_login')}}"><i class="fa fa-fw fa-user"></i>Se connecter</a>
+                        </li>   
+                    {% endif %}
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{path('app_login')}}"><i class="fa fa-fw fa-user"></i>Login</a>
-                    </li> 
                     {% if app.user%}
                         {% if app.user.username == 'dg' %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{path('log_index')}}"><i class="fa fa-history" aria-hidden="true"></i>Voir historique</a>
+                                <a class="nav-link" href="{{path('log_index')}}"><i class="fa fa-history" aria-hidden="true"></i>Contrôle </a>
                             </li> 
                         {% endif %}
                     {% endif %}
@@ -74,7 +82,7 @@
 
         {% block content %}{% endblock %}
         <footer class="mt-5 p-3 text-center bg-light">
-            Credit: <i style="color: red;" class="fa fa-heart"></i> ftr <a style="color: #444; text-decoration: underline;" href="www.paositramalagasy.mg">Paositra Malagasy</a>
+            Credit: ftr <a style="color: #444; text-decoration: underline;" href="www.paositramalagasy.mg">Paositra Malagasy</a>
         </footer>
         {% block javascripts %}
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

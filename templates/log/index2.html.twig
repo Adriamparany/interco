@@ -1,0 +1,246 @@
+{% extends 'base.html.twig' %}
+{% set countYMD = {'years':0, 'months':0, 'weeks':0, 'lessOneWeek':0, 'days':0} %}
+{% set dico = {codique:"Codique",datelog:"Date", dateval:"Date de validation", date_validation:"Date de validation", nombureau:"Bureau"} %}
+{% block body %}
+    <div id="content">
+        {% if results is defined and results|length > 0 %}
+            {#
+            <pre>
+                {{ dump(results) }}
+            </pre>
+            #}
+            {{ results|length  }} lignes   
+            <input type="text" name="search" placeholder="Filtrer votre recherche ici..">
+            <a class="nav-link" href="{{path('page')}}"><i class="fa fa-fw fa-search"></i>Suivi</a>
+            <div class="table-responsive">
+                <!--Table-->
+                <table class="table table-striped">
+                    <!--Table head-->
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Utilisateur</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <!--Table head-->
+
+                    <!--Table body-->
+                    <tbody id="myTable">
+                        {% for indice,arrayRes in results %}
+                            <tr>
+                                <th scope="row"> {{ indice + 1 }}</th>
+                                {% for key,value in arrayRes %}
+                                    {% if key == 'datelog' %}
+                                        {#<td>{{ value|format_datetime('long', 'none', locale='fr') }}</td>#}
+                                        <td>{{ value ? value|date('d-m-Y H:i:s') : '' }}</i></td>
+                                    {% elseif key == 'id' %} 
+                                        <td>
+                                            <a data-bs-toggle="tooltip" title="Détails sur l'authentification" href="/log/{{ value }}"><i class="fa fa-plus"></i> </a>
+                                            {% if isEditable is defined and isEditable %}
+                                                <a href="{{ path('log_edit', {'id': log.id}) }}">edit</a>
+                                            {% endif %}
+                                        </td>
+                                    {% elseif key == 'username' %} 
+                                        <td>                
+                                            <a data-bs-toggle="tooltip" title="Détails sur l'authentification" href="/log/details/{{ value }}">{{ value }}</i> </a>
+                                        </td>
+                                    {% elseif key == 'logtype' %} 
+                                        
+                                    {% else %}                                    
+                                        <td>{{ value }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                                {#}
+                                <td>
+                                    <a href="{{ path('log_show', {'id': log.id}) }}">show</a>
+                                    {% if isEditable is defined and isEditable %}
+                                        <a href="{{ path('log_edit', {'id': log.id}) }}">edit</a>
+                                    {% endif %}
+                                </td>
+                                #}
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                    <!--Table body-->
+                </table>
+                <!--Table-->
+            </div>
+            <a href="{{ path('log_index') }}">Retour à la list</a>
+
+        {% endif %}
+        
+    <div>
+    <script>//cannot be inserted outside the block if not countYMD's values would be zero
+        $(document).ready(function(e){
+            console.log('document ready on show.html.twig')
+            $('#exampleModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget) // Button that triggered the modal
+                var recipient = button.data('recipient') // Extract info from data-* attributes
+                var sender = button.data('sender')
+
+                var subject = button.data('subject')
+                var today = new Date()
+                var dd = String(today.getDate()).padStart(2, '0')
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                var yyyy = today.getFullYear()
+                today = dd + '-' + mm + '-' + yyyy
+                subject = subject + today
+
+                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                var message = button.data('msgcontent')
+                message = message + " depuis l'initialisation de la comptabilité du bureau."
+
+                var modal = $(this)
+                modal.find('.modal-title').text('Notifier ' + recipient)
+                modal.find('.form-group>[for="sender-name"]').text('De:')
+                modal.find('.form-group>[for="recipient-name"]').text('à:')
+                modal.find('.form-group>[for="subject-name"]').text('Objet:')
+                modal.find('.modal-footer [data-dismiss="modal"]').text('Fermer')
+                modal.find('.modal-footer .btn-primary').text('Envoyer')
+                modal.find('.modal-body input#recipient-name').val(recipient)
+                modal.find('.modal-body input#sender-name').val(sender)
+                modal.find('.modal-body textarea#message-text').val(message)
+                modal.find('.modal-body input#subject-name').val(subject)
+            })
+
+
+            $('#accountingsituationmodal').on('show.bs.modal', function (event) {
+                var cible = $(event.relatedTarget) // Button that triggered the modal
+                $( ".tbaccounting" ).empty();//empty table
+                $("#accountingsituationmodal .modal-title").empty();
+                var row = ''
+                var totalrow = ''
+                console.log(cible.data('ma'))
+                $.ajax({
+                    url: "{{ path('showaccountingjson') }}",
+                    type: "POST",
+                    data: {codique: cible.data("codique"), date: cible.data("validation")},
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) {
+                        console.log(response.data)
+                        console.log(response.check)
+                        $("#accountingsituationmodal .modal-body").addClass('row')
+                        $("#accountingsituationmodal .modal-title").text('Détails de l\'encaisse - '+'Bureau: '+cible.data('bureau')+ ' (M.A: ' + numberWithSpaces((cible.data("ma")).toFixed(2))+' ariary)')
+                        var total =  0
+                        var i=0
+                        $.each(response.data[0], function( key, value ) {   
+                            //alert(typeof(value) + key + ": " + value );                    
+                            if(key == 'date'){
+                                var x = new Date(value)
+                                var dd = String(x.getDate()).padStart(2, '0')
+                                var mm = String(x.getMonth() + 1).padStart(2, '0'); 
+                                var yyyy = x.getFullYear()
+                                value = dd + '-' + mm + '-' + yyyy
+                            }else{
+                                if(value != null){         
+                                    value = parseFloat(value) //cast values into number except date
+                                }   
+                            }
+                            
+                            key = key.replace(/_/g, " ")  //replace all "_" with space
+                            var bg = ""
+                            
+                            var printvalue = 0                          
+                            
+                            if (typeof value === 'number'){
+                                if(key.replace(/ /g, "") != 'TotalUV' && key.replace(/ /g, "") != 'MA'){
+                                    total = total + value
+                                    //alert(key)
+                                }
+                                
+                                printvalue = numberWithSpaces(value.toFixed(2))
+                            }else{
+                                printvalue = value
+                            }
+                            console.log(total)
+                            if(isEven(i)){
+                                if(i == 0){
+                                    bg = "fw-bold"
+                                }else{
+                                    bg = "bg-secondary text-white"
+                                }
+                            }else{
+                                bg = "bg-white text-dark"
+                            }
+
+                            //manage printing
+                            if(key != 'MA'){
+                                row = $('<tr>');
+                                row.append($('<td class="'+bg+'" id=' + key + '>').html(key));
+                                row.append($('<td class="'+bg+'" id=' + value + '>').html(printvalue));
+                                row.append($('</tr>'));
+                                $("#accountingsituationmodal .modal-body table").append(row) 
+                                i = i + 1 
+                            }                                          
+                        }); 
+                        total = total.toFixed(2) 
+                        totalrow = $('<tr>');
+                        totalrow.append($('<td class="bg-info">').html("TOTAL"))
+                        totalrow.append($('<td class="bg-info" id="total">').html(numberWithSpaces(total)))
+                        totalrow.append($('</tr>'));
+                        $("#accountingsituationmodal .modal-body table").append(totalrow) 
+                    },
+                    error: function(jqXHR, status, error) {
+                        console.log(status + ": " + error);
+                    }
+                })
+            }) 
+            //alert on MAXIMUM AUTORISE
+            //alert('kaiz e')
+            
+            //$("#myTable a[data-target='#accountingsituationmodal']").html('fetra')          
+        })
+
+        //get all data from form, returns json object
+        function getFormData($form){
+            var unindexed_array = $form.serializeArray();
+            var indexed_array = {};
+
+            $.map(unindexed_array, function(n, i){
+                indexed_array[n['name']] = n['value'];
+            });
+            return indexed_array;
+        }
+
+        function filterFunction() {
+            var input, filter, ul, li, a, i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            div = document.getElementById("myDropdown");
+            a = div.getElementsByTagName("a");
+            for (i = 0; i < a.length; i++) {
+                txtValue = a[i].textContent || a[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+                } else {
+                a[i].style.display = "none";
+                }
+            }
+        }
+
+        function isEven(n) {
+            return n % 2 == 0;
+        }
+
+        function isOdd(n) {
+            return Math.abs(n % 2) == 1;
+        }
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function numberWithSpaces(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+    </script>
+    {#
+    <pre>
+        {{ dump(countYMD) }}
+    </pre>
+    #}
+{% endblock %}

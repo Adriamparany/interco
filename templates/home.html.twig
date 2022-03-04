@@ -28,7 +28,7 @@
             {% endif %}
             
             {#{{ dump(referer) }}#}
-            Bienvenu, vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ referer }}">Se deconnecter</a>
+            Vous êtes connecté en tant que {{ app.user.username }}, Veuillez ne pas oublier de <a href="{{ referer }}">vous deconnecter</a> à la fin de votre visite.
             <a class="nav-link" href="{{path('page')}}"><i class="fa fa-fw fa-search"></i>Suivi</a>
         </div> 
     {% else %}

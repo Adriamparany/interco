@@ -1,28 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log index{% endblock %}
+{% block title %}Historique sur l'authentification{% endblock %}
 
 {% block body %}
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Username</th>
-                <th>Datelog</th>
-                <th>Logtype</th>
-                <th>actions</th>
+                {#<th>Id</th>#}
+                <th>Utilisateur</th>
+                <th>Date</th>
+                {#<th>Logtype</th>#}
+                <th></th>
             </tr>
         </thead>
         <tbody>
+        {#
+        <pre>
+            {{ dump(logs) }}
+        </pre>
+        #}
         {% for log in logs %}
             <tr>
-                <td>{{ log.id }}</td>
+                {#<td>{{ log.id }}</td>#}
                 <td>{{ log.username }}</td>
                 <td>{{ log.datelog ? log.datelog|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ log.logtype }}</td>
                 <td>
-                    <a href="{{ path('log_show', {'id': log.id}) }}">show</a>
+                    <a href="{{ path('log_show', {'id': log.id}) }}"><i class="fa fa-plus"></i></a>
                     {% if isEditable is defined and isEditable %}
                         <a href="{{ path('log_edit', {'id': log.id}) }}">edit</a>
                     {% endif %}
@@ -40,4 +45,5 @@
     {% if isEditable is defined and isEditable %}
         <a href="{{ path('log_new') }}">Create new</a>
     {% endif %}
+    <a href="{{ path('log_index') }}">Retour à la list</a>
 {% endblock %}

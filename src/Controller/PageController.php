@@ -38,9 +38,9 @@ class PageController extends AbstractController{
                $tblvalidation1 = $tblvalidationrepository->findAllLastValidationForEachCodique();
                $tblvalidation2 = $tblvalidationrepository->findAllLastValidationForEachCodique($em);
                $tblvalidation = array_merge($tblvalidation1, $tblvalidation2);
-               dump($tblvalidation1);
-               dump($tblvalidation2);
-               dump($tblvalidation);
+               //dump($tblvalidation1);
+               //dump($tblvalidation2);
+               //dump($tblvalidation);
             }elseif($usrfct == 'chefdecentre'){
                $tblvalidation1 = $tblvalidationrepository->findAllLastValidationForOneCodique($cod);
                $tblvalidation2 = $tblvalidationrepository->findAllLastValidationForOneCodique($cod, $em);
@@ -102,7 +102,7 @@ class PageController extends AbstractController{
        * @Route("/page/{slug}", name="showdetailsvalidation")
       */
       public function showTblValidationDetails(TblvalidationRepository $tblvalidationrepository, $slug){
-         dump($slug);
+         //dump($slug);
          if($slug == "10103"){
             $em = $this->get('doctrine')->getManager('custom');
          }else{
@@ -114,7 +114,7 @@ class PageController extends AbstractController{
          if (!$tblvalidation) {
             throw $this->createNotFoundException('La table est vide');
          }
-         dump($tblvalidation);
+         //dump($tblvalidation);
          return $this->render('detailsvalidation.html.twig',
          [ 'controller_name' => 'PageController', 'results' => $tblvalidation
          ]);
@@ -175,7 +175,7 @@ class PageController extends AbstractController{
             $b=$x[1];
             $data_array += [$a=>$b];           
         }
-        dump($data_array);
+        //dump($data_array);
          $codique=$data_array['codique'];
          $date=$data_array['date'];
          $rattachement ="Mon bureau";

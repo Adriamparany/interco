@@ -3,7 +3,11 @@
 {% block title %}New Log{% endblock %}
 
 {% block body %}
-    <h1>Create new Log </h1>
+    <h1> Nouvelle authentification</h1>
+    {% if autosubmit is defined and autosubmit %}
+        <h5>Enregistrement log .... Vous allez être redirigé  </h5>
+    {% endif %}
+    
     
 
     {{ include('log/_form.html.twig') }}

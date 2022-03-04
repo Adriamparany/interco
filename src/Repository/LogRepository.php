@@ -47,4 +47,25 @@ class LogRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findAllLastLogForEachUsername()
+    {
+        $entityManager = $this->getEntityManager();
+        $dql = "SELECT distinct log1.username, log1.datelog, log1.logtype, log1.id from App\Entity\Log log1 WHERE
+        log1.id IN (SELECT MAX(log2.id) idm FROM App\Entity\Log log2 WHERE log2.logtype='login' and log2.username<>'dg' GROUP BY log2.username)";
+
+        $query = $entityManager->createQuery($dql);
+        return $query->execute();
+    }
+
+    public function findByUsername($value)
+    {
+        return $this->createQueryBuilder('l')
+            ->andWhere('l.username = :val')
+            ->setParameter('val', $value)
+            ->orderBy('l.id', 'DESC')
+            ->setMaxResults(15)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
